@@ -3,9 +3,9 @@ package facade;
 import controller.frontend.MainController;
 import controller.frontend.ScreensController;
 import controller.frontend.StageController;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import util.Settings.Scenes;
 
 /**
@@ -29,20 +29,19 @@ public class FacadeFrontend {
     }
 
     public void initialize(Stage stage, Scenes scene) throws Exception {
-        FXMLLoader loaderFXML = this.screensController.getLoaderFXML(scene);
-        Parent loadedScreen = loaderFXML.load();
-        this.mainController = loaderFXML.getController();
+        Pair<Parent, Object> loadedScreen = this.screensController.getOrLoadScreen(scene);
+        this.mainController = (MainController) loadedScreen.getValue();
         this.stageController = new StageController(stage);
-        this.stageController.changeMainStage(scene.getTitle(), loadedScreen);
+        this.stageController.changeMainStage(scene.getTitle(), loadedScreen.getKey());
     }
 
     public void changeScreean(Scenes scene) throws Exception {
-        Parent loadedScreen = this.screensController.loadScreen(scene);
+        Parent loadedScreen = this.screensController.getOrLoadScreen(scene).getKey();
         this.stageController.changeMainStage(scene.getTitle(), loadedScreen);
     }
 
-    public Parent getScreen(Scenes scene) throws Exception {
-        return this.screensController.loadScreen(scene);
+    public Pair<Parent, Object> getSceneAndController(Scenes scene) throws Exception {
+        return this.screensController.getOrLoadScreen(scene);
     }
 
     public double getStageHeigth() {
@@ -53,17 +52,13 @@ public class FacadeFrontend {
         return this.stageController.getStageX();
     }
 
-    public void showContentAuxStage(Scenes scene, String name) throws Exception {
-        Parent content = this.screensController.loadScreen(scene);
-        this.stageController.changeStageContent(name, scene.getTitle(), content);
+    public void showContentInAuxStage(Scenes scene, String stageName) throws Exception {
+        Parent content = this.screensController.getOrLoadScreen(scene).getKey();
+        this.stageController.changeStageContent(stageName, scene.getTitle(), content);
     }
 
-    public void addScreen(Scenes scene, Parent parent) throws Exception {
-        this.screensController.addScreen(scene, parent);
+    public void addScreen(Scenes scene) throws Exception {
+        this.screensController.addScreen(scene);
     }
-
-    public FXMLLoader getLoaderScreen(Scenes scene) {
-        return this.screensController.getLoaderFXML(scene);
-    }
-
+    
 }
