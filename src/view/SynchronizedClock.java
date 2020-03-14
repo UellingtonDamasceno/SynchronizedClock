@@ -12,7 +12,7 @@ import util.Settings.Scenes;
  * @author Uellington Conceição
  */
 public class SynchronizedClock extends Application {
-    
+
     @Override
     public void start(Stage primaryStage) {
         try {
@@ -28,5 +28,5 @@ public class SynchronizedClock extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-    
+
 }
