@@ -10,12 +10,14 @@ public class Pear implements Comparable {
     private String ip;
     private int port;
     private boolean status;
-
-    public Pear(String ip, int port, boolean status) {
+    private boolean reference;
+    
+    public Pear(String ip, int port, boolean status, boolean reference) {
         this.ip = ip;
         this.port = port;
         this.id = this.ip + this.port;
         this.status = status;
+        this.reference = reference;
     }
 
     public String getID() {
@@ -38,6 +40,10 @@ public class Pear implements Comparable {
         this.status = status;
     }
 
+    public boolean isReference(){
+        return this.reference;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 7;

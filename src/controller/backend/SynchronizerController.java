@@ -1,12 +1,10 @@
 package controller.backend;
 
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import middleware.Client;
 import model.Clock;
 import model.Synchronizer;
 
@@ -31,6 +29,10 @@ public class SynchronizerController {
         return this.executor;
     }
 
+    public void setReference(Client reference) {
+        this.synchronizer.setReference(reference);
+    }
+
     public void startExecutor() {
         this.stopSynchronization();
         this.stopExecutor();
@@ -52,10 +54,10 @@ public class SynchronizerController {
         this.startSynchronization(5, TimeUnit.SECONDS);
     }
 
-    public void startSynchronization(long interval){
+    public void startSynchronization(long interval) {
         this.startSynchronization(interval, TimeUnit.SECONDS);
     }
-    
+
     public void startSynchronization(long interval, TimeUnit timeUnit) {
         this.sincronization = this.getExecutor().scheduleAtFixedRate(synchronizer, 0, interval, timeUnit);
     }

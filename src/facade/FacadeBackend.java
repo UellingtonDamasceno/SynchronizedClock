@@ -7,6 +7,7 @@ import controller.backend.SynchronizerController;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Queue;
+import middleware.Client;
 import model.Pear;
 
 /**
@@ -28,12 +29,38 @@ public class FacadeBackend {
         this.synchronizerController = new SynchronizerController();
     }
     
-    private static synchronized FacadeBackend getInstance(){
+    public static synchronized FacadeBackend getInstance(){
         return (facade == null) ? facade = new FacadeBackend() : facade;
     }
     
     public void initialize(String clientIP, int clientPort, int serverPort) throws IOException{
         this.connectionController.startAll(clientIP, clientPort,  serverPort);
+        this.pearController.addNewPear(clientIP, clientPort);
+    }
+    
+    public void initialize(int port) throws IOException{
+        this.connectionController.startServer(port);
+        String localHost = this.connectionController.getLocalHost();
+        this.pearController.setReference(localHost, port);
+    }
+
+    public void setReferencePear(String ip, int port){
+        this.pearController.setReference(ip, port);
+    }
+
+    public void setReferencePear(Pear pear){
+        this.pearController.setReference(pear);
+    }
+
+    public void initializeSynchronization(){
+        Client reference = this.connectionController.getClient();
+        this.synchronizerController.setReference(reference);
+        this.synchronizerController.startExecutor();
+        this.synchronizerController.startSynchronization();
+    }
+    
+    public void connectWith(Pear pear) throws IOException{
+        this.connectionController.startClient(pear.getIP(), pear.getPort());
     }
     
     public void setKnownPears(Queue<Pear> knownPears){

@@ -16,6 +16,7 @@ import model.exceptions.NotExistPearOnlineException;
  */
 public class PearController {
 
+    private Pear reference;
     private Queue<Pear> allPears;
 
     public PearController() {
@@ -30,12 +31,24 @@ public class PearController {
         return Collections.unmodifiableCollection(this.allPears);
     }
 
+    public Pear getReference(){
+        return this.reference;
+    }
+    
+    public void setReference(String ip, int port){
+        this.setReference(new Pear(ip, port, true, true));
+    }
+    
+    public void setReference(Pear pear){
+        this.reference = pear;
+    }
+    
     public void addNewPear(String ip, int port, boolean status) {
-        this.addNewPear(new Pear(ip, port, status));
+        this.addNewPear(new Pear(ip, port, status, false));
     }
 
     public void addNewPear(String ip, int port) {
-        this.addNewPear(new Pear(ip, port, true));
+        this.addNewPear(new Pear(ip, port, true, false));
     }
 
     public void addNewPear(Pear pear) {

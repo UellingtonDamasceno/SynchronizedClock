@@ -6,6 +6,22 @@ package util;
  */
 public class Settings {
 
+     public enum Connection{
+        DEFAULT_PORT(9999),
+        DEFAULT_IP(127001);
+    
+        private final int value;
+     
+        private Connection(int value){
+            this.value = value;
+        }
+        
+        @Override
+        public String toString(){
+            return (this.value == 9999) ? String.valueOf(value) : "127.0.0.1"; 
+        }
+    }
+    
     public enum Icons {
         MAIN_ICON("main");
 
