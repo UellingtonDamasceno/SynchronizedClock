@@ -2,12 +2,12 @@ package controller.frontend;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.application.Platform;
-import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import model.Clock;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextField;
 
 /**
  * FXML Controller class
@@ -17,20 +17,28 @@ import model.Clock;
 public class MainController implements Initializable {
 
     @FXML
-    private Label lblClock;
+    private TextField txtKnownServer;
+    @FXML
+    private TextField txtKnownPort;
+    @FXML
+    private TextField txtThisPort;
+    @FXML
+    private CheckBox checkBoxDefault;
+    @FXML
+    private CheckBox checkBoxIsReference;
+    @FXML
+    private Button btnOK;
 
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        Clock clock = new Clock();
-        clock.getSimpleTimeProperty().addListener((observable, oldValue, newValue) -> {
-            Platform.runLater(()->{
-                lblClock.setText(newValue.toString());
-            });
-        });
-        clock.initialize();
+        
+    }
+
+    @FXML
+    private void next(ActionEvent event) {
     }
 
 }
