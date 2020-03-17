@@ -1,6 +1,7 @@
 package controller.frontend;
 
 import facade.FacadeBackend;
+import facade.FacadeFrontend;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
@@ -17,6 +18,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import util.MaskFieldUtil;
 import util.Settings.Connection;
+import util.Settings.Scenes;
 
 /**
  * FXML Controller class
@@ -48,21 +50,17 @@ public class MainController implements Initializable {
 
         this.checkBoxDefault.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
-                this.txtThisPort.setText(Connection.DEFAULT_PORT.toString());
+//                this.txtKnownPort.setText(Connection.DEFAULT_PORT.toString());
                 this.txtKnownServer.setText(Connection.DEFAULT_IP.toString());
             } else {
-                this.txtKnownPort.setText("");
+//                this.txtKnownPort.setText("");
                 this.txtKnownServer.setText("");
             }
-            this.txtKnownPort.setDisable(newValue);
+            this.checkBoxIsReference.setDisable(newValue);
+//            this.txtKnownPort.setDisable(newValue);
             this.txtKnownServer.setDisable(newValue);
         });
 
-        this.checkBoxIsReference.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            this.txtKnownPort.setDisable(newValue);
-            this.txtKnownServer.setDisable(newValue);
-        });
-        
         List<TextField> allFields = Arrays.asList(txtKnownPort, txtKnownServer, txtThisPort);
         allFields.stream().forEach((oneField) -> {
             oneField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -77,11 +75,27 @@ public class MainController implements Initializable {
                 }
             });
         });
-        
+
+        this.checkBoxIsReference.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            this.txtKnownPort.setDisable(newValue);
+            this.txtKnownServer.setDisable(newValue);
+            this.checkBoxDefault.setDisable(newValue);
+            
+            if (newValue && !this.txtThisPort.getText().isEmpty()) {
+                this.btnOK.setDisable(false);
+            } else if (!newValue) {
+                allFields.stream().filter((oneField) -> {
+                    return oneField.getText().isEmpty();
+                }).findAny().ifPresent((field) -> {
+                    this.btnOK.setDisable(true);
+                });
+            }
+        });
+
     }
 
     @FXML
-    private void next(ActionEvent event) {
+    private void next(ActionEvent event) throws Exception {
         try {
             String serverIP = this.txtKnownServer.getText();
             String knownPort = this.txtKnownPort.getText();
@@ -97,6 +111,7 @@ public class MainController implements Initializable {
         } catch (IOException ex) {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        FacadeFrontend.getInstance().changeScreean(Scenes.CLOCK);
     }
 
 }

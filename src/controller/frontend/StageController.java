@@ -22,6 +22,7 @@ public class StageController {
         this.stages = new HashMap();
         this.container = new Pane();
         this.stages.put("mainStage", mainStage);
+        mainStage.setResizable(false);
         mainStage.getIcons().add(new Image(Icons.MAIN_ICON.getIconPath()));
     }
     
@@ -30,6 +31,17 @@ public class StageController {
     }
     public double getStageX(){
         return this.stages.get("mainStage").getWidth();
+    }
+    
+    /**
+     * Solução de engenharia para esse momento eheheh 
+     * Lembrar de desenvolver uma estrategia automatica;
+     * @param offset 
+     */
+    public void incrementStageWidth(double offset){
+        double width = this.stages.get("mainStage").getWidth();
+        this.stages.get("mainStage").setMinWidth(width+offset);
+        this.stages.get("mainStage").setMaxWidth(width+offset);
     }
     
     public void changeMainStage(String title, Parent content) {

@@ -1,6 +1,8 @@
 package view;
 
+import facade.FacadeBackend;
 import facade.FacadeFrontend;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
@@ -20,6 +22,13 @@ public class SynchronizedClock extends Application {
         } catch (Exception ex) {
             Logger.getLogger(SynchronizedClock.class.getName()).log(Level.SEVERE, null, ex);
         }
+        primaryStage.setOnCloseRequest((event) -> {
+            try {
+                FacadeBackend.getInstance().finalizeAll();
+            } catch (IOException ex) {
+                Logger.getLogger(SynchronizedClock.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
     }
 
     /**

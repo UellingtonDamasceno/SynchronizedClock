@@ -52,6 +52,10 @@ public class FacadeFrontend {
         return this.stageController.getStageX();
     }
 
+    public void incrementStageWidth(double offset){
+        this.stageController.incrementStageWidth(offset);
+    }
+    
     public void showContentInAuxStage(Scenes scene, String stageName) throws Exception {
         Parent content = this.screensController.getOrLoadScreen(scene).getKey();
         this.stageController.changeStageContent(stageName, scene.getTitle(), content);

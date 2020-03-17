@@ -17,7 +17,9 @@ import org.json.JSONObject;
  */
 public class Client extends Observable implements Runnable {
 
+    private String id;
     private String ip;
+    private int port;
     private Socket socket;
 
     private BufferedReader reader;
@@ -33,18 +35,27 @@ public class Client extends Observable implements Runnable {
         return this.ip;
     }
 
+    public String getID() {
+        return this.id;
+    }
+
+    public int getPort() {
+        return this.port;
+    }
+
     public boolean isOnline() {
         return online;
     }
 
-    public void start(String ip, int port) throws IOException{
+    public void start(String ip, int port) throws IOException {
         this.start(new Socket(ip, port));
     }
-    
+
     public void start(Socket socket) throws IOException {
         this.socket = socket;
         this.ip = ((String) socket.getRemoteSocketAddress().toString().replace("/", ""));
-        
+        this.port = socket.getPort();
+        this.id = this.ip + port;
         InputStreamReader is = new InputStreamReader(this.socket.getInputStream());
         this.reader = new BufferedReader(is);
 
@@ -55,16 +66,21 @@ public class Client extends Observable implements Runnable {
     }
 
     public void close() throws IOException {
-        this.online = false;
-        this.writer.close();
-        this.reader.close();
-        this.socket.close();
-        this.deleteObservers();
+        if (this.online) {
+            this.online = false;
+            this.writer.close();
+            this.reader.close();
+            this.socket.close();
+            this.deleteObservers();
+        }
     }
 
-    public synchronized void send(String response) throws IOException {
-        this.writer.write(response);
-        this.writer.flush();
+    public synchronized void send(String message) throws IOException {
+        if (this.online) {
+            System.out.println("Enviando: " + message);
+            this.writer.write(message + "\n");
+            this.writer.flush();
+        }
     }
 
     @Override
@@ -74,11 +90,13 @@ public class Client extends Observable implements Runnable {
         while (this.online) {
             try {
                 message = this.reader.readLine();
+                System.out.println("Chegou um nova mensagem: " + message);
                 if (message != null && !(message.isEmpty())) {
                     this.setChanged();
                     this.notifyObservers(message);
                 }
             } catch (IOException ex) {
+                this.online = false;
                 Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
             }
         }

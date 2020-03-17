@@ -64,10 +64,15 @@ public class ConnectionController {
         this.client.send(message);
     }
 
-    public void notifiyAllClient(String message) {
+    public void notifyAllClient(String message) {
         this.server.notifyAll(message);
     }
 
+    public void notifyAll(String message) throws IOException{
+        this.sendToServer(message);
+        this.notifyAllClient(message);
+    }
+    
     public void startAll(String clientIp, int clientPort, int serverPort) throws IOException {
         this.startServer(serverPort);
         this.startClient(clientIp, clientPort);

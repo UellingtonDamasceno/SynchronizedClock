@@ -23,8 +23,9 @@ public class Settings {
     }
     
     public enum Icons {
-        MAIN_ICON("main");
-
+        MAIN_ICON("main"),
+        OK("ok"),
+        CANCEL("cancel");
         private final String name;
         private final String ORIGIN = "/resources/icons/";
         private final String EXTENSION = ".png";
@@ -38,9 +39,25 @@ public class Settings {
         }
     }
 
+    public enum Images{
+        DIGITAL_CLOCK_BACKGROUND("resources/images/DigitalClock.png");
+        
+        private final String path;
+        
+        private Images(String path){
+            this.path = path;
+        }
+        
+        public String getPath(){
+            return this.path;
+        }
+    }
+    
     public enum Scenes {
-        MAIN("Main.fxml", "Menu", false);
-
+        MAIN("Main.fxml", "Menu", false),
+        CLOCK("Clock.fxml", "Relógio sincronizado", false),
+        CLOCK_SETTINGS("ClockSettings.fxml", "Configurações", true);
+        
         private final String name;
         private final String title;
         private final boolean cache;

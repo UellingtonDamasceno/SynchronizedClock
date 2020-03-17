@@ -1,7 +1,15 @@
 package middleware;
 
+import model.exceptions.NotFoundException;
+import facade.FacadeBackend;
+import java.io.IOException;
+import java.util.Collection;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import model.Pear;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -27,6 +35,37 @@ public class Router implements Observer {
     }
 
     public synchronized void process(Client client, JSONObject request) {
+        String command = request.getString("command");
+        switch (command) {
+            case "GET/ALL/PEARS": {
+                Collection<Pear> knownPears = FacadeBackend.getInstance().getKnownPears();
+                JSONArray teste = new JSONArray(knownPears);
+                try {
+                    client.send(teste.toString());
+                } catch (IOException ex) {
+                    Logger.getLogger(Router.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                break;
+            }
+            case "NEW/PEAR/CONNECTED": {
+                JSONObject pear = new JSONObject(request.getString("pear"));
+                String ip = pear.getString("ip");
+                int port = pear.getInt("port");
+                boolean reference = pear.getBoolean("isReference");
+                boolean status = pear.getBoolean("status");
+                try {
+                    FacadeBackend.getInstance().addNewKnownPear(ip, port, status, reference);
+                    FacadeBackend.getInstance().notifyAllNewPearConnected(ip + port);
+                    break;
+                } catch (NotFoundException ex) {
+                    System.out.println("O pear com id: " + ip + port + " Não foi encontrado!");
+                } catch (IOException ex) {
+                    Logger.getLogger(Router.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            default:
+                System.out.println("Comando invalido: " + command);
+        }
     }
 
     @Override

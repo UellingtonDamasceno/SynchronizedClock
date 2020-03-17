@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.frontend.ClockSettingsController">
+   <top>
+      <HBox alignment="CENTER" prefHeight="41.0" prefWidth="300.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Configurações">
+               <font>
+                  <Font size="26.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
+   </top>
+   <center>
+      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+         <children>
+            <VBox fx:id="vboxRootType" prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <VBox fx:id="vboxSync" alignment="CENTER_LEFT" prefHeight="61.0" prefWidth="300.0" spacing="5.0">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                     <children>
+                        <Label text="Sincronização">
+                           <VBox.margin>
+                              <Insets left="15.0" />
+                           </VBox.margin>
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="95.0">
+                           <children>
+                              <Label text="Intervalo" />
+                              <Label text="Unidade de tempo" />
+                           </children>
+                           <padding>
+                              <Insets left="15.0" />
+                           </padding>
+                        </HBox>
+                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+                           <children>
+                              <ComboBox fx:id="comboBoxDefaultTime" prefHeight="25.0" prefWidth="126.0" />
+                              <ComboBox fx:id="comboBoxTimeUnit" prefHeight="25.0" prefWidth="124.0" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <Separator prefHeight="35.0" prefWidth="290.0" />
+                  <VBox fx:id="vboxOffset" prefHeight="66.0" prefWidth="290.0" spacing="5.0">
+                     <children>
+                        <Label text="Deslocamento" />
+                        <Slider fx:id="sliderOffset" max="50.0" min="-50.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" />
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="15.0" right="10.0" top="10.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </VBox>
+            <Separator prefHeight="35.0" prefWidth="290.0" />
+            <HBox alignment="CENTER_LEFT" prefHeight="46.0" prefWidth="290.0" spacing="115.0">
+               <children>
+                  <Label text="Estado da apliação" />
+                  <ToggleButton fx:id="toggleButonState" mnemonicParsing="false" selected="true">
+                     <graphic>
+                        <ImageView fx:id="imageViewState" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" />
+                     </graphic>
+                  </ToggleButton>
+               </children>
+               <padding>
+                  <Insets bottom="8.0" left="15.0" right="8.0" top="8.0" />
+               </padding>
+            </HBox>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </BorderPane.margin>
+      </VBox>
+   </center>
+</BorderPane>

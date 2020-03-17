@@ -1,5 +1,6 @@
 package controller.backend;
 
+import model.exceptions.NotFoundException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -31,16 +32,24 @@ public class PearController {
         return Collections.unmodifiableCollection(this.allPears);
     }
 
-    public Pear getReference(){
+    public boolean isReference(String ip, int port) {
+        return this.reference.getID().equals(ip + port);
+    }
+
+    public Pear getReference() {
         return this.reference;
     }
-    
-    public void setReference(String ip, int port){
+
+    public void setReference(String ip, int port) {
         this.setReference(new Pear(ip, port, true, true));
     }
-    
-    public void setReference(Pear pear){
+
+    public void setReference(Pear pear) {
         this.reference = pear;
+    }
+
+    public void addNewPear(String ip, int port, boolean status, boolean reference){
+        this.addNewPear(new Pear(ip, port, status, reference));
     }
     
     public void addNewPear(String ip, int port, boolean status) {
@@ -77,6 +86,13 @@ public class PearController {
 
     public List<Pear> getAllConnectedPears() {
         return this.allPears.stream().collect(Collectors.partitioningBy(Pear::isOnline)).get(true);
+    }
+
+    public Pear getPear(String id) throws NotFoundException {
+        return this.allPears.stream()
+                .filter(pear -> pear.getID().equals(id))
+                .findAny()
+                .orElseThrow(NotFoundException::new);
     }
 
 }

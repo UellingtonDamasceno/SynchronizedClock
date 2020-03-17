@@ -1,5 +1,7 @@
 package middleware;
 
+import model.exceptions.NotFoundException;
+import facade.FacadeBackend;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -29,6 +31,14 @@ public class Server implements Runnable {
 
     public int getConnections() {
         return this.clients.size();
+    }
+
+    public String getIP() {
+        return this.server.getInetAddress().getHostAddress();
+    }
+    
+    public int getPort(){
+        return this.server.getLocalPort();
     }
 
     public Client remove(String ip) {
@@ -70,9 +80,14 @@ public class Server implements Runnable {
                 client.addObserver(Router.getInstance());
                 client.start(socket);
                 this.clients.put(client.getIP(), client);
+                FacadeBackend.getInstance().addNewKnownPear(client.getIP(), client.getPort(), client.isOnline(), false);
+                FacadeBackend.getInstance().notifyAllNewPearConnected(client.getID());
                 System.out.println("Nova conexão:" + client);
             } catch (IOException ex) {
+                this.online = false;
                 System.out.println("Falha na conexão: " + ex.getMessage());
+            } catch (NotFoundException ex) {
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

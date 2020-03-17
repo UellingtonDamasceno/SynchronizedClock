@@ -39,14 +39,14 @@ public class ScreensController {
     }
 
     public Pair<Parent, Object> addScreen(Scenes scene) throws Exception {
-        Pair<Parent, Object> sceneAndController = this.getSceneAndController(scene);
+        Pair<Parent, Object> sceneAndController = this.loadScreen(scene);
         return this.addScreen(scene, sceneAndController);
     }
 
     public Pair<Parent, Object> addScreen(Scenes scene, Parent content, Object controller) throws Exception {
         if (scene != null && content != null) {
             allScreens.put(scene, new Pair(content, controller));
-            return this.getSceneAndController(scene);
+            return this.loadScreen(scene);
         } else {
             throw new Exception("Id ou Conteudo nulo");
         }

@@ -1,5 +1,7 @@
 package model;
 
+import org.json.JSONObject;
+
 /**
  *
  * @author Uellington Conceição
@@ -68,4 +70,16 @@ public class Pear implements Comparable {
         }
         return 1;
     }
+    
+    @Override
+    public String toString(){
+        JSONObject json = new JSONObject();
+        json.accumulate("ip", ip);
+        json.accumulate("id", id);
+        json.accumulate("port", port);
+        json.accumulate("isReference", reference);
+        json.accumulate("status", status);
+        return json.toString();
+    }
+    
 }
