@@ -51,11 +51,21 @@ public class Client extends Observable implements Runnable {
         this.start(new Socket(ip, port));
     }
 
+    public void reconnect() {
+        new Thread(this).start();
+    }
+
+    public void disconnect() {
+        this.online = false;
+    }
+
     public void start(Socket socket) throws IOException {
         this.socket = socket;
+
         this.ip = ((String) socket.getRemoteSocketAddress().toString().replace("/", ""));
         this.port = socket.getPort();
         this.id = this.ip + port;
+
         InputStreamReader is = new InputStreamReader(this.socket.getInputStream());
         this.reader = new BufferedReader(is);
 
@@ -96,8 +106,13 @@ public class Client extends Observable implements Runnable {
                     this.notifyObservers(message);
                 }
             } catch (IOException ex) {
+                try {
+                    this.close();
+                } catch (IOException ex1) {
+                    this.online = false;
+                }
                 this.online = false;
-                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+                break;
             }
         }
     }
@@ -120,6 +135,8 @@ public class Client extends Observable implements Runnable {
     public String toString() {
         JSONObject json = new JSONObject();
         json.accumulate("client", this.ip);
+        json.accumulate("port", this.port);
+        json.accumulate("id", this.id);
         json.accumulate("connection_status", this.online);
         return json.toString();
     }

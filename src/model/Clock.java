@@ -2,7 +2,8 @@ package model;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 
 /**
  *
@@ -10,7 +11,7 @@ import javafx.beans.property.SimpleDoubleProperty;
  */
 public class Clock implements Runnable {
 
-    private SimpleDoubleProperty time;
+    private IntegerProperty time;
 
     private long resolution;
     private double offset;
@@ -18,8 +19,8 @@ public class Clock implements Runnable {
     private boolean online;
 
     public Clock() {
-        this.time = new SimpleDoubleProperty(0);
-        this.resolution = 0;
+        this.time = new SimpleIntegerProperty((int) System.currentTimeMillis());
+        this.resolution = 1000;
         this.offset = 0;
         this.online = false;
     }
@@ -28,15 +29,15 @@ public class Clock implements Runnable {
         new Thread(this).start();
     }
 
-    public void finalize() {
+    public void stop() {
         this.online = false;
     }
 
-    public double getTime() {
+    public int getTime() {
         return this.time.get();
     }
 
-    public SimpleDoubleProperty getSimpleTimeProperty() {
+    public IntegerProperty getSimpleTimeProperty() {
         return this.time;
     }
 
@@ -48,8 +49,9 @@ public class Clock implements Runnable {
     public void run() {
         this.online = true;
         while (this.online) {
-            this.time.set(this.time.get() + 1);
+            this.time.set(this.time.get() + 1000);
             try {
+//                System.out.println("Resolution: "+ (long) (resolution - offset));
                 Thread.sleep((long) (resolution - offset));
             } catch (InterruptedException ex) {
                 Logger.getLogger(Clock.class.getName()).log(Level.SEVERE, null, ex);

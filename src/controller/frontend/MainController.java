@@ -80,7 +80,7 @@ public class MainController implements Initializable {
             this.txtKnownPort.setDisable(newValue);
             this.txtKnownServer.setDisable(newValue);
             this.checkBoxDefault.setDisable(newValue);
-            
+
             if (newValue && !this.txtThisPort.getText().isEmpty()) {
                 this.btnOK.setDisable(false);
             } else if (!newValue) {

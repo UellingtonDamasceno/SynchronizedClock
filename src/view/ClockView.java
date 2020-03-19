@@ -1,21 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package view;
 
+import facade.FacadeBackend;
 import java.util.Calendar;
-import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.event.ActionEvent;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.effect.Glow;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.util.Duration;
+import model.Clock;
 
 /**
  *
@@ -24,8 +18,9 @@ import javafx.util.Duration;
 public class ClockView extends Parent {
 
     private Calendar calendar = Calendar.getInstance();
-    private Digit[] digits;
+    private final Digit[] digits;
     private Timeline delayTimeline, secondTimeline;
+    private Clock clock;
 
     public ClockView(Color onColor, Color offColor) {
         // create effect for on LEDs
@@ -52,13 +47,15 @@ public class ClockView extends Parent {
                 new Circle((80 * 3) + 54 + 17, 64, 6, onColor));
         dots.setEffect(onDotEffect);
         getChildren().add(dots);
-        // update digits to current time and start timer to update every second
-        refreshClocks();
-        play();
+        this.clock = FacadeBackend.getInstance().getClock();
+        this.clock.getSimpleTimeProperty().addListener((observable, oldValue, newValue) -> {
+            this.refreshClocks(newValue.intValue());
+        });
+        this.clock.initialize();
     }
 
-    private void refreshClocks() {
-        calendar.setTimeInMillis(System.currentTimeMillis());
+    private void refreshClocks(int value) {
+        calendar.setTimeInMillis(value);
         int hours = calendar.get(Calendar.HOUR_OF_DAY);
         int minutes = calendar.get(Calendar.MINUTE);
         int seconds = calendar.get(Calendar.SECOND);
@@ -70,26 +67,25 @@ public class ClockView extends Parent {
         digits[5].showNumber(seconds % 10);
     }
 
-    public void play() {
-        // wait till start of next second then start a timeline to call refreshClocks() every second
-        delayTimeline = new Timeline();
-        delayTimeline.getKeyFrames().add(
-                new KeyFrame(new Duration(1000 - (System.currentTimeMillis() % 1000)), (ActionEvent event) -> {
-                    if (secondTimeline != null) {
-                        secondTimeline.stop();
-                    }
-                    secondTimeline = new Timeline();
-                    secondTimeline.setCycleCount(Timeline.INDEFINITE);
-                    secondTimeline.getKeyFrames().add(
-                            new KeyFrame(Duration.seconds(1), (ActionEvent event1) -> {
-                                refreshClocks();
-                            }));
-                    secondTimeline.play();
-                })
-        );
-        delayTimeline.play();
-    }
-
+//    public void play() {
+//        // wait till start of next second then start a timeline to call refreshClocks() every second
+//        delayTimeline = new Timeline();
+//        delayTimeline.getKeyFrames().add(
+//                new KeyFrame(new Duration(1000 - (System.currentTimeMillis() % 1000)), (ActionEvent event) -> {
+//                    if (secondTimeline != null) {
+//                        secondTimeline.stop();
+//                    }
+//                    secondTimeline = new Timeline();
+//                    secondTimeline.setCycleCount(Timeline.INDEFINITE);
+//                    secondTimeline.getKeyFrames().add(
+//                            new KeyFrame(Duration.seconds(1), (ActionEvent event1) -> {
+//                                refreshClocks();
+//                            }));
+//                    secondTimeline.play();
+//                })
+//        );
+//        delayTimeline.play();
+//    }
     public void stop() {
         delayTimeline.stop();
         if (secondTimeline != null) {

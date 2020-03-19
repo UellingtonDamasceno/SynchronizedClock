@@ -4,11 +4,13 @@ import model.exceptions.NotFoundException;
 import facade.FacadeBackend;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Pear;
+import model.exceptions.ReferenceNotFoundException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -39,13 +41,27 @@ public class Router implements Observer {
         switch (command) {
             case "GET/ALL/PEARS": {
                 Collection<Pear> knownPears = FacadeBackend.getInstance().getKnownPears();
-                JSONArray teste = new JSONArray(knownPears);
+                JSONArray pears = new JSONArray(knownPears);
+                JSONObject message = new JSONObject();
+                message.accumulate("command", "UPDATE/LIST/KNOWN/PEARS");
+                message.accumulate("pears", pears.toString());
                 try {
-                    client.send(teste.toString());
+                    client.send(message.toString());
                 } catch (IOException ex) {
                     Logger.getLogger(Router.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 break;
+            }
+            case "UPDATE/LIST/KNOWN/PEARS": {
+                try {
+                    JSONArray pears = request.getJSONArray("pears");
+                    LinkedList<Pear> knownPears = new LinkedList(pears.toList());
+                    FacadeBackend.getInstance().setKnownPears(knownPears);
+                    break;
+                } catch (ReferenceNotFoundException ex) {
+                    Logger.getLogger(Router.class.getName()).log(Level.SEVERE, null, ex);
+                    //Iniciar uma nova eleição
+                }
             }
             case "NEW/PEAR/CONNECTED": {
                 JSONObject pear = new JSONObject(request.getString("pear"));
@@ -56,12 +72,40 @@ public class Router implements Observer {
                 try {
                     FacadeBackend.getInstance().addNewKnownPear(ip, port, status, reference);
                     FacadeBackend.getInstance().notifyAllNewPearConnected(ip + port);
-                    break;
                 } catch (NotFoundException ex) {
                     System.out.println("O pear com id: " + ip + port + " Não foi encontrado!");
                 } catch (IOException ex) {
                     Logger.getLogger(Router.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                break;
+            }
+            case "SYNCHRONIZE": {
+                try {
+                    JSONObject message = new JSONObject();
+                    int time = FacadeBackend.getInstance().getCurrentTime();
+                    message.accumulate("a", request.getInt("a"));
+                    message.accumulate("x", time);
+                    time = FacadeBackend.getInstance().getCurrentTime();
+                    message.accumulate("y", time);
+                    client.send(message.toString());
+                } catch (IOException ex) {
+                    Logger.getLogger(Router.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                break;
+            }
+            case "RECONNECT": {
+                String id = request.getString("id");
+                FacadeBackend.getInstance().reconnectPear(id);
+                break;
+            }
+            case "DISCONNECT": {
+                String id = request.getString("id");
+                FacadeBackend.getInstance().disconnectPear(id);
+                break;
+            }
+            case "FINALIZE": {
+               
+                break;
             }
             default:
                 System.out.println("Comando invalido: " + command);

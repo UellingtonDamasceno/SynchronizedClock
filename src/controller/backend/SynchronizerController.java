@@ -19,7 +19,7 @@ public class SynchronizerController {
     private ScheduledFuture sincronization;
 
     public SynchronizerController() {
-        this.synchronizer = new Synchronizer(new Clock());
+        this.synchronizer = new Synchronizer();
     }
 
     private synchronized ScheduledExecutorService getExecutor() {
@@ -29,6 +29,10 @@ public class SynchronizerController {
         return this.executor;
     }
 
+    public void setClock(Clock clock){
+        this.synchronizer.setClock(clock);
+    }
+    
     public void setReference(Client reference) {
         this.synchronizer.setReference(reference);
     }
@@ -51,7 +55,7 @@ public class SynchronizerController {
     }
 
     public void startSynchronization() {
-        this.startSynchronization(5, TimeUnit.SECONDS);
+        this.startSynchronization(1, TimeUnit.SECONDS);
     }
 
     public void startSynchronization(long interval) {
@@ -62,9 +66,9 @@ public class SynchronizerController {
         this.sincronization = this.getExecutor().scheduleAtFixedRate(synchronizer, 0, interval, timeUnit);
     }
 
-    public void updateSyncInterval(long interval) {
+    public void updateSyncInterval(long interval, TimeUnit timeUnit) {
         this.stopSynchronization();
-        this.sincronization = this.getExecutor().scheduleAtFixedRate(synchronizer, 0, interval, TimeUnit.SECONDS);
+        this.sincronization = this.getExecutor().scheduleAtFixedRate(synchronizer, 0, interval, timeUnit);
         System.out.println("Atualizando o intervalo");
     }
 

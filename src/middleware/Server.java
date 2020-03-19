@@ -3,8 +3,10 @@ package middleware;
 import model.exceptions.NotFoundException;
 import facade.FacadeBackend;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -33,8 +35,8 @@ public class Server implements Runnable {
         return this.clients.size();
     }
 
-    public String getIP() {
-        return this.server.getInetAddress().getHostAddress();
+    public String getIP() throws UnknownHostException {
+        return InetAddress.getLocalHost().getHostAddress();
     }
     
     public int getPort(){
@@ -79,7 +81,7 @@ public class Server implements Runnable {
                 Client client = new Client();
                 client.addObserver(Router.getInstance());
                 client.start(socket);
-                this.clients.put(client.getIP(), client);
+                this.clients.put(client.getID(), client);
                 FacadeBackend.getInstance().addNewKnownPear(client.getIP(), client.getPort(), client.isOnline(), false);
                 FacadeBackend.getInstance().notifyAllNewPearConnected(client.getID());
                 System.out.println("Nova conexão:" + client);
@@ -89,6 +91,18 @@ public class Server implements Runnable {
             } catch (NotFoundException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }
+        }
+    }
+
+    public void reconnectPear(String id){
+        if(this.clients.containsKey(id)){
+            this.clients.get(id).reconnect();
+        }
+    }
+    
+    public void disconnectPear(String id) {
+        if(this.clients.containsKey(id)){
+            this.clients.get(id).disconnect();
         }
     }
 }
